@@ -1,14 +1,25 @@
 public class Thread
     {
 
-        public void Start(ThreadStartDelegate taskAddress)
+        public void Start(ThreadStartDelegate taskAddress , ThreadCallbackDelegate callbackAddress)
         {
             taskAddress.Invoke();
-           
+            callbackAddress.Invoke();
+        }
+        public void StartSearch(ThreadStartSearchDelegate taskAddress , ThreadCallbackSearchDelegate callbackAddress)
+        {
+            taskAddress.Invoke();
+            callbackAddress.Invoke();
         }
     }
+
+   public  delegate void ThreadStartSearchDelegate(string searchkey);
+   public  delegate void ThreadCallbackSearchDelegate(string result);
+
+
    public  delegate void ThreadStartDelegate();
-  
+   public  delegate void ThreadCallbackDelegate(bool isSuccess);
+
     class Program
     {
         static void Main(string[] args)
@@ -20,29 +31,34 @@ public class Thread
         {
             Console.WriteLine("Button Clicked");
             Thread _searchThread = new Thread();
-            ThreadStartDelegate _searchTaskAddress = new ThreadStartDelegate(Program.SearchWrapper);
-            _searchThread.Start(_searchTaskAddress);
+           
+            ThreadStartSearchDelegate _searchTaskAddress = new ThreadStartSearchDelegate(Program.SearchTask);
+            ThreadCallbackSearchDelegate _updateUiAddress = new ThreadCallbackSearchDelegate(Program.UpdateUi);
+            _searchThread.StartSearch(_searchTaskAddress , _updateUiAddress);
 
             Thread _updateTaskThread = new Thread();
             ThreadStartDelegate _updateTaskAddress = new ThreadStartDelegate(Program.UpdateTask);
-            _updateTaskThread.Start(_updateTaskAddress);
+            ThreadCallbackDelegate _updateTaskCallbackAddress = new ThreadCallbackDelegate(Program.UpdateCallback);
+            _updateTaskThread.Start(_updateTaskAddress , _updateTaskCallbackAddress);
 
             Thread _deleteTaskThread = new Thread();
-            _deleteTaskThread.Start(new ThreadStartDelegate(Program.DeleteTask));
+            ThreadStartDelegate _deleteTaskAddress = new ThreadStartDelegate(Program.DeleteTask);
+            ThreadCallbackDelegate _deleteTaskCallbackAddress = new ThreadCallbackDelegate(Program.DeleteCallback);
+            _deleteTaskThread.Start(_deleteTaskAddress ,_deleteTaskCallbackAddress);
+           
         }
-        static void SearchWrapper()
-        {
-            SearchTask("null");
-        }
+        
+//         static void SearchWrapper()
+//         {
+//             SearchTask("null");
+//         }
+        
         static void SearchTask(string searchKey) { }
+        static void  UpdateUi(string result) { }
+        
         static void UpdateTask() { }
-        static void DeleteTask() { }
-
-        static void  UpdateUi(string result)
-        {
-
-        }
         static void UpdateCallback(bool isUpdateSuccess) { }
+        static void DeleteTask() { }
         static void DeleteCallback(bool isUpdateSuccess) { }
 
 
