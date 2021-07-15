@@ -1,15 +1,16 @@
+using System;
 public class Thread
     {
 
         public void Start(ThreadStartDelegate taskAddress , ThreadCallbackDelegate callbackAddress)
         {
             taskAddress.Invoke();
-            callbackAddress.Invoke();
+            callbackAddress.Invoke(true);
         }
         public void StartSearch(ThreadStartSearchDelegate taskAddress , ThreadCallbackSearchDelegate callbackAddress)
         {
-            taskAddress.Invoke();
-            callbackAddress.Invoke();
+            taskAddress.Invoke("searchKey");
+            callbackAddress.Invoke("result");
         }
     }
 
